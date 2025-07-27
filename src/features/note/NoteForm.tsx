@@ -4,54 +4,126 @@ import styled from 'styled-components';
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
   width: 100%;
+  touch-action: manipulation;
+  
+  @media (max-width: 480px) {
+    gap: 0.6rem;
+  }
 `;
 
 const Input = styled.input`
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 1rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  min-height: 20px;
+  
+  @media (max-width: 480px) {
+    padding: 0.65rem 0.75rem;
+    font-size: 1rem;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
 `;
 
 const TextArea = styled.textarea`
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 1rem;
-  min-height: 100px;
+  min-height: 120px;
   resize: vertical;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  line-height: 1.5;
+  
+  @media (max-width: 480px) {
+    padding: 0.65rem 0.75rem;
+    font-size: 1rem;
+    min-height: 100px;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
 `;
 
 const ColorPicker = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  margin: 0.5rem 0;
+  margin: 0.25rem 0 0.75rem;
+  touch-action: manipulation;
+  
+  @media (max-width: 480px) {
+    gap: 0.5rem 0.4rem;
+    margin: 0.25rem 0 0.5rem;
+  }
 `;
 
 const ColorOption = styled.button<{ color: string; $isSelected: boolean }>`
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
   border: 2px solid ${(props) => (props.$isSelected ? '#333' : 'transparent')};
   cursor: pointer;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  flex-shrink: 0;
+  transition: transform 0.1s ease, border-color 0.1s ease;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  @media (max-width: 480px) {
+    width: 30px;
+    height: 30px;
+  }
 `;
 
 const SubmitButton = styled.button`
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.25rem;
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
-  margin-top: 0.5rem;
-
-  &:hover {
-    background-color: #45a049;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  
+  &:hover, &:focus {
+    background-color: #43a047;
+  }
+  
+  &:active {
+    transform: translateY(1px);
+    background-color: #3d8b40;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
   }
 `;
 

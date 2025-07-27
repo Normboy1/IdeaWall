@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { ChromePicker } from 'react-color';
@@ -25,9 +25,16 @@ const NoteContainer = styled(motion.div)<{ $color: string; $isShooting: boolean 
   background-color: ${props => props.$color};
   cursor: ${props => (props.$isShooting ? 'crosshair' : 'grab')};
   touch-action: none;
+  -webkit-tap-highlight-color: transparent;
   user-select: none;
   transform-origin: center;
   transition: transform 0.1s ease-out;
+  
+  @media (max-width: 480px) {
+    width: 200px;
+    min-height: 160px;
+    padding: 0.75rem;
+  }
   
   &:active {
     cursor: ${props => (props.$isShooting ? 'crosshair' : 'grabbing')};
@@ -51,6 +58,11 @@ const NoteTitle = styled.h3`
   color: #333;
   flex: 1;
   cursor: text;
+  word-break: break-word;
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
 `;
 
 const NoteContent = styled.div`
@@ -58,6 +70,14 @@ const NoteContent = styled.div`
   color: #444;
   white-space: pre-wrap;
   word-break: break-word;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const DeleteButton = styled.button`
@@ -66,23 +86,39 @@ const DeleteButton = styled.button`
   color: #ff4444;
   cursor: pointer;
   font-size: 1.2rem;
-  padding: 0.2rem 0.5rem;
+  padding: 0.4rem 0.6rem;
+  margin: -0.4rem -0.5rem -0.4rem 0.5rem;
   border-radius: 4px;
   transition: background-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   
-  &:hover {
+  &:hover, &:focus {
     background-color: rgba(255, 0, 0, 0.1);
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.5rem 0.7rem;
+    margin: -0.5rem -0.5rem -0.5rem 0.5rem;
   }
 `;
 
 const ColorPickerButton = styled.button`
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: 2px solid #fff;
   border-radius: 50%;
-  margin-right: 0.5rem;
+  margin: -0.2rem 0.5rem -0.2rem -0.2rem;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  flex-shrink: 0;
+  
+  @media (max-width: 480px) {
+    width: 22px;
+    height: 22px;
+  }
 `;
 
 const ColorPickerContainer = styled.div`
@@ -189,7 +225,7 @@ export const Note: React.FC<NoteProps> = ({
           <NoteTitle>{title}</NoteTitle>
         )}
         
-        <DeleteButton onClick={handleDelete}>
+        <DeleteButton onClick={handleDelete} aria-label="Delete note">
           ×
         </DeleteButton>
       </NoteHeader>

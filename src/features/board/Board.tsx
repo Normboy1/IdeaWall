@@ -18,6 +18,7 @@ const BoardContainer = styled.div`
   height: 100%;
   overflow: hidden;
   touch-action: none;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const BoardContent = styled.div`
@@ -48,9 +49,16 @@ const NoteContainer = styled(motion.div).attrs<NoteContainerProps>({
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: ${props => (props.$isShooting ? 'crosshair' : 'grab')};
   touch-action: none;
+  -webkit-tap-highlight-color: transparent;
   user-select: none;
   transform-origin: center;
   z-index: 1;
+  
+  @media (max-width: 480px) {
+    width: 200px;
+    min-height: 160px;
+    padding: 0.75rem;
+  }
   
   &:active {
     cursor: ${props => (props.$isShooting ? 'crosshair' : 'grabbing')};
@@ -71,9 +79,11 @@ const EmptyState = styled.div`
 
 const FormContainer = styled.div<{ $isShooting?: boolean }>`
   position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  transform: none;
+  margin: 0 auto;
   z-index: ${props => props.$isShooting ? 1 : 10};
   background: white;
   padding: 1rem;
@@ -82,10 +92,20 @@ const FormContainer = styled.div<{ $isShooting?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 300px;
+  max-width: 500px;
+  width: calc(100% - 2rem);
   opacity: ${props => props.$isShooting ? 0.7 : 1};
   pointer-events: ${props => props.$isShooting ? 'none' : 'auto'};
   transition: all 0.3s ease;
+  touch-action: manipulation;
+  
+  @media (min-width: 768px) {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: auto;
+    min-width: 300px;
+  }
 `;
 
 const DeletedNoteContainer = styled(motion.div)<{ $color: string }>`
