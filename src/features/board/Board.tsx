@@ -55,9 +55,9 @@ const NoteContainer = styled(motion.div).attrs<NoteContainerProps>({
   z-index: 1;
   
   @media (max-width: 480px) {
-    width: 200px;
-    min-height: 160px;
-    padding: 0.75rem;
+    width: 140px;
+    min-height: 110px;
+    padding: 0.5rem;
   }
   
   &:active {

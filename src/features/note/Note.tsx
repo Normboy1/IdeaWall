@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { ChromePicker } from 'react-color';
 import type { ColorResult } from 'react-color';
-import type { Note as NoteType } from '../notes/types';
+import type { NoteType } from '../notes/types';
 
 export interface NoteProps {
   id: string;
@@ -31,9 +31,9 @@ const NoteContainer = styled(motion.div)<{ $color: string; $isShooting: boolean 
   transition: transform 0.1s ease-out;
   
   @media (max-width: 480px) {
-    width: 200px;
-    min-height: 160px;
-    padding: 0.75rem;
+    width: 140px;
+    min-height: 110px;
+    padding: 0.5rem;
   }
   
   &:active {
