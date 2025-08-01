@@ -5,6 +5,9 @@ import { theme } from './styles/theme';
 import Board from './features/board/Board';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastProvider } from './context/ToastContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { AuthButton } from './components/Auth/AuthButton';
+import { SyncStatus } from './components/SyncStatus';
 import { store } from './app/store';
 
 const AppContainer = styled.div`
@@ -45,14 +48,18 @@ function App() {
       <GlobalStyle />
       <ErrorBoundary>
         <Provider store={store}>
-          <ToastProvider>
-            <AppContainer>
-              <MainContent>
-                <Board />
-              </MainContent>
-              <ToastStyles />
-            </AppContainer>
-          </ToastProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <AppContainer>
+                <AuthButton />
+                <SyncStatus />
+                <MainContent>
+                  <Board />
+                </MainContent>
+                <ToastStyles />
+              </AppContainer>
+            </ToastProvider>
+          </AuthProvider>
         </Provider>
       </ErrorBoundary>
     </ThemeProvider>

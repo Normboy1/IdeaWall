@@ -6,6 +6,8 @@ import type { NoteType, Position } from './types';
 interface NotesState {
   notes: NoteType[];
   isShootingMode: boolean;
+  isCloudSynced: boolean;
+  syncError: string | null;
 }
 
 // Define action payload types
@@ -30,6 +32,8 @@ interface MoveNotePayload {
 const initialState: NotesState = {
   notes: [],
   isShootingMode: false,
+  isCloudSynced: false,
+  syncError: null,
 };
 
 const notesSlice = createSlice({
@@ -45,7 +49,9 @@ const notesSlice = createSlice({
           payload: {
             ...note,
             id: uuidv4(),
-            rotation: Math.floor(Math.random() * 10) - 5, // Random rotation between -5 and 5 degrees
+            content: note.description, // Map description to content for compatibility
+            size: { width: 250, height: 200 }, // Default size
+            rotation: note.rotation ?? Math.floor(Math.random() * 10) - 5, // Random rotation between -5 and 5 degrees
             createdAt: Date.now(),
             updatedAt: Date.now(),
           },
@@ -81,6 +87,22 @@ const notesSlice = createSlice({
       state.notes = [];
       state.isShootingMode = false;
     },
+    // Cloud sync actions
+    setNotesFromCloud(state, action: PayloadAction<NoteType[]>) {
+      state.notes = action.payload;
+      state.isCloudSynced = true;
+      state.syncError = null;
+    },
+    setSyncError(state, action: PayloadAction<string>) {
+      state.syncError = action.payload;
+      state.isCloudSynced = false;
+    },
+    clearSyncError(state) {
+      state.syncError = null;
+    },
+    setCloudSyncStatus(state, action: PayloadAction<boolean>) {
+      state.isCloudSynced = action.payload;
+    },
   },
 });
 
@@ -90,7 +112,11 @@ export const {
   deleteNote, 
   moveNote, 
   toggleShootingMode, 
-  resetBoard 
+  resetBoard,
+  setNotesFromCloud,
+  setSyncError,
+  clearSyncError,
+  setCloudSyncStatus
 } = notesSlice.actions;
 
 export default notesSlice.reducer;

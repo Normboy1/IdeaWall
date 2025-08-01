@@ -8,6 +8,8 @@ import { addNote, deleteNote, updateNote } from '../notes/notesSlice';
 import type { NoteType, Position } from '../notes/types';
 import { Note } from '../note/Note';
 import NoteForm from '../note/NoteForm';
+import { useAuth } from '../../contexts/AuthContext';
+import { useCloudSync } from '../../hooks/useCloudSync';
 
 // Styled components
 const BoardContainer = styled.div`
@@ -142,13 +144,15 @@ const Board: React.FC<BoardProps> = () => {
   const dispatch = useDispatch();
   const notes = useSelector((state: RootState) => state.notes.notes);
   const isShootingMode = useSelector((state: RootState) => state.notes.isShootingMode);
+  const { currentUser } = useAuth();
+  const { syncNoteToCloud, deleteNoteFromCloud } = useCloudSync();
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
+  const [, setDragStart] = useState<Position>({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 });
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const handleNoteAdd = useCallback((title: string, content: string, color: string) => {
+  const handleNoteAdd = useCallback(async (title: string, content: string, color: string) => {
     const newNote = {
       id: uuidv4(),
       title,
@@ -162,15 +166,36 @@ const Board: React.FC<BoardProps> = () => {
       updatedAt: Date.now()
     };
     dispatch(addNote(newNote));
-  }, [dispatch]);
+    
+    // Sync to cloud if user is authenticated
+    if (currentUser) {
+      try {
+        await syncNoteToCloud(newNote);
+      } catch (error) {
+        console.error('Failed to sync new note to cloud:', error);
+      }
+    }
+  }, [dispatch, currentUser, syncNoteToCloud]);
 
-  const handleNoteUpdate = useCallback((id: string, updates: Partial<NoteType>) => {
+  const handleNoteUpdate = useCallback(async (id: string, updates: Partial<NoteType>) => {
     dispatch(updateNote({ id, updates }));
-  }, [dispatch]);
+    
+    // Sync to cloud if user is authenticated
+    if (currentUser) {
+      try {
+        const updatedNote = notes.find(note => note.id === id);
+        if (updatedNote) {
+          await syncNoteToCloud({ ...updatedNote, ...updates });
+        }
+      } catch (error) {
+        console.error('Failed to sync updated note to cloud:', error);
+      }
+    }
+  }, [dispatch, currentUser, syncNoteToCloud, notes]);
 
   const [deletedNotes, setDeletedNotes] = useState<Record<string, { destination: 'heaven' | 'hell', position: Position }>>({});
 
-  const handleNoteDelete = useCallback((id: string) => {
+  const handleNoteDelete = useCallback(async (id: string) => {
     // Find the note to get its position before deletion
     const note = notes.find((n: NoteType) => n.id === id);
     if (note) {
@@ -187,8 +212,17 @@ const Board: React.FC<BoardProps> = () => {
       }));
       
       // Delay actual deletion for animation
-      setTimeout(() => {
+      setTimeout(async () => {
         dispatch(deleteNote(id));
+        
+        // Delete from cloud if user is authenticated
+        if (currentUser) {
+          try {
+            await deleteNoteFromCloud(id);
+          } catch (error) {
+            console.error('Failed to delete note from cloud:', error);
+          }
+        }
         
         // Remove from deleted notes after animation completes
         setTimeout(() => {
